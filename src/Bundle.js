@@ -20,6 +20,7 @@ import relativeId from './utils/relativeId.js';
 import error from './utils/error.js';
 import { dirname, isRelative, isAbsolute, normalize, relative, resolve } from './utils/path.js';
 import BundleScope from './ast/scopes/BundleScope.js';
+import { realpath } from './utils/fs.js';
 
 export default class Bundle {
 	constructor ( options ) {
@@ -340,6 +341,9 @@ export default class Bundle {
 		return mapSequence( module.sources, source => {
 			const resolvedId = module.resolvedIds[ source ];
 			return ( resolvedId ? Promise.resolve( resolvedId ) : this.resolveId( source, module.id ) )
+				.then( resolvedId => new Promise(resolve => realpath(resolvedId, (err, file) => {
+					resolve(err ? resolvedId : file)
+				})))
 				.then( resolvedId => {
 					const externalId = resolvedId || (
 						isRelative( source ) ? resolve( module.id, '..', source ) : source
