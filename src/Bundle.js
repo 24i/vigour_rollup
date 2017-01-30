@@ -341,9 +341,11 @@ export default class Bundle {
 		return mapSequence( module.sources, source => {
 			const resolvedId = module.resolvedIds[ source ];
 			return ( resolvedId ? Promise.resolve( resolvedId ) : this.resolveId( source, module.id ) )
-				.then( resolvedId => new Promise(resolve => realpath(resolvedId, (err, file) => {
-					resolve(err ? resolvedId : file)
-				})))
+				.then( resolvedId => new Promise(resolve => {
+					resolvedId ? realpath(resolvedId, (err, file) => {
+						resolve(err ? resolvedId : file)
+					}) : resolve(resolvedId)
+				}))
 				.then( resolvedId => {
 					const externalId = resolvedId || (
 						isRelative( source ) ? resolve( module.id, '..', source ) : source

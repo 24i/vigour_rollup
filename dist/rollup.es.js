@@ -1,6 +1,6 @@
 /*
 	Rollup.js v0.41.4
-	Sun Jan 29 2017 21:43:31 GMT+0100 (CET) - commit 084876511e55f4f8b0ff277abe26c522f0d5368b
+	Mon Jan 30 2017 20:51:08 GMT+0100 (CET) - commit 687c6dab66124e394693da924ee2deaae9604f1f
 
 
 	https://github.com/rollup/rollup
@@ -9519,9 +9519,11 @@ Bundle$$1.prototype.fetchAllDependencies = function fetchAllDependencies ( modul
 	return mapSequence( module.sources, function (source) {
 		var resolvedId = module.resolvedIds[ source ];
 		return ( resolvedId ? Promise.resolve( resolvedId ) : this$1.resolveId( source, module.id ) )
-			.then( function (resolvedId) { return new Promise(function (resolve$$1) { return realpath(resolvedId, function (err, file) {
-				resolve$$1(err ? resolvedId : file);
-			}); }); })
+			.then( function (resolvedId) { return new Promise(function (resolve$$1) {
+				resolvedId ? realpath(resolvedId, function (err, file) {
+					resolve$$1(err ? resolvedId : file);
+				}) : resolve$$1(resolvedId);
+			}); })
 			.then( function (resolvedId) {
 				var externalId = resolvedId || (
 					isRelative( source ) ? resolve( module.id, '..', source ) : source
@@ -9633,7 +9635,7 @@ Bundle$$1.prototype.render = function render ( options ) {
 		this.warn({
 			code: 'EMPTY_BUNDLE',
 			message: 'Generated an empty bundle'
-		});
+			});
 	}
 
 	timeEnd( 'render modules' );
@@ -9642,10 +9644,10 @@ Bundle$$1.prototype.render = function render ( options ) {
 		.concat(
 			this.plugins.map( function (plugin) { return plugin.intro && plugin.intro(); } )
 		)
-		.filter( Boolean )
+			.filter( Boolean )
 		.join( '\n\n' );
 
-	if ( intro ) intro += '\n\n';
+		if ( intro ) intro += '\n\n';
 
 	var outro = [ options.outro ]
 		.concat(
@@ -9654,9 +9656,9 @@ Bundle$$1.prototype.render = function render ( options ) {
 		.filter( Boolean )
 		.join( '\n\n' );
 
-	if ( outro ) outro = "\n\n" + outro;
+		if ( outro ) outro = "\n\n" + outro;
 
-		var indentString = getIndentString( magicString, options );
+	var indentString = getIndentString( magicString, options );
 
 	var finalise = finalisers[ options.format ];
 	if ( !finalise ) {
@@ -9771,7 +9773,7 @@ Bundle$$1.prototype.sort = function sort () {
 			var loop = function (  ) {
 				var b = ordered[i];
 
-				// TODO reinstate this! it no longer works
+					// TODO reinstate this! it no longer works
 				if ( stronglyDependsOn[ a.id ][ b.id ] ) {
 					// somewhere, there is a module that imports b before a. Because
 					// b imports a, a is placed before b. We need to find the module
@@ -9789,12 +9791,12 @@ Bundle$$1.prototype.sort = function sort () {
 							var dependency = module.dependencies[i];
 							if ( !visited[ dependency.id ] && findParent( dependency ) ) return true;
 						}
-					};
+						};
 
-					findParent( this$1.entryModule );
+						findParent( this$1.entryModule );
 
-						this$1.onwarn(
-						("Module " + (a.id) + " may be unable to evaluate without " + (b.id) + ", but is included first due to a cyclical dependency. Consider swapping the import statements in " + parent + " to ensure correct ordering")
+					this$1.onwarn(
+							("Module " + (a.id) + " may be unable to evaluate without " + (b.id) + ", but is included first due to a cyclical dependency. Consider swapping the import statements in " + parent + " to ensure correct ordering")
 					);
 				}
 			};
