@@ -1,5 +1,5 @@
 {
-  "name": "@vigour-io/rollup",
+  "name": "rollup",
   "version": "0.41.4",
   "description": "Next-generation ES6 module bundler",
   "main": "dist/rollup.js",
