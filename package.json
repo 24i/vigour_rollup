@@ -5,9 +5,6 @@
   "main": "dist/rollup.js",
   "module": "dist/rollup.es.js",
   "jsnext:main": "dist/rollup.es.js",
-  "bin": {
-    "rollup": "./bin/rollup"
-  },
   "scripts": {
     "pretest": "npm run build && npm run build:cli",
     "test": "mocha",
